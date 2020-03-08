@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Icon } from '@mdi/react';
-import { mdiStar, mdiHeartOutline, mdiHeart, mdiLoading, mdiEye } from '@mdi/js';
+import { mdiStar, mdiHeartOutline, mdiHeart, mdiLoading, mdiEye, mdiMovieOpen } from '@mdi/js';
 import Modal from '../Modal';
 import { withAuth } from '../../hoc/Auth';
 
 const MovieListItem = ({ movie, auth }) => {
   const [liked, setLiked] = useState(false);
-  const [modal, setModal] = useState(false);
+  const [detailsModal, setDetailsModal] = useState(false);
+  const [trailerModal, setTrailerModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const budgetFormatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -51,7 +52,11 @@ const MovieListItem = ({ movie, auth }) => {
   }
 
   const showMovieDetails = () => {
-    setModal(true);
+    setDetailsModal(true);
+  }
+
+  const showTrailer = () => {
+    setTrailerModal(true);
   }
 
   const movieLikeAction = () => {
@@ -63,11 +68,27 @@ const MovieListItem = ({ movie, auth }) => {
     return <Icon path={mdiEye} size={1.5} className="icon--right" onClick={showMovieDetails} />
   }
 
+  const movieTrailerAction = () => {
+    return <Icon path={mdiMovieOpen} size={1.5} className="icon--right" onClick={showTrailer} />
+  }
+
   return (
     <>
       {
-        modal ?
-          <Modal handleClose={() => { setModal(false) }}>
+        trailerModal ?
+          <Modal handleClose={() => { setTrailerModal(false) }}>
+            <div className="form-group">
+              <iframe width="100%" height="400" title="Trailer de pelicula"
+                src="https://www.youtube.com/embed/4SiiRx7GDzI">
+              </iframe>
+            </div>
+          </Modal>
+          :
+          false
+      }
+      {
+        detailsModal ?
+          <Modal handleClose={() => { setDetailsModal(false) }}>
             <div className="flex-row">
               <div className="form-group flex-grow flex-row horizontal--center">
                 <img src={movie.photo} className="movie__image" alt={movie.title} />
@@ -108,6 +129,7 @@ const MovieListItem = ({ movie, auth }) => {
                 <>
                   {movieLikeAction()}
                   {movieDetailsAction()}
+                  {movieTrailerAction()}
                 </>
             }
           </div>
